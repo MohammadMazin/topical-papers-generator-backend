@@ -2,9 +2,11 @@ require('dotenv/config')
 const express = require('express')
 const mongoose = require('mongoose')
 const app = express()
+const cors = require('cors')
 const bodyParser = require('body-parser')
 
 app.use(bodyParser.json())
+app.use(cors())
 
 //import routes
 const boardsRoute = require('./routes/boards')

@@ -1,5 +1,7 @@
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+
 
 exports.getAllUsers = async(req, res, next) => {
     try {
@@ -36,8 +38,16 @@ exports.loginUser = async(req, res, next) => {
             res.send('User Not Found')
             // TODO: How to handle admin check
         if (await bcrypt.compare(password, user.password)) {
+
+            const { _id } = user
+            const token = jwt.sign({ _id }, process.env.JWT_SECRET, {
+                //token expires in 3 days
+                expiresIn: 4320,
+            })
+
             res.json({
                 success: true,
+                token,
                 data: {
                     _id: user._id,
                     name: user.name,
