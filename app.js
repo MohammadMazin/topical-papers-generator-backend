@@ -29,7 +29,7 @@ app.use('/users', usersRoute)
 //Connect to DB
 mongoose.connect(
     process.env.DB_CONNECTION, () => {
-        console.log('connected')
+        console.log('Connected to Database')
     }
 )
 

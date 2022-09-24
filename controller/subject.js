@@ -12,7 +12,7 @@ exports.getAllSubjects = async(req, res, next) => {
 exports.addSubject = async(req, res, next) => {
     try {
         const { name, boardId, subjectCategoryId } = req.body
-        const newSubject = await Subject.create({ name, description, boardId })
+        const newSubject = await Subject.create({ name, subjectCategoryId, boardId })
         res.json({
             success: true,
             data: newSubject

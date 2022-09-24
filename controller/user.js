@@ -35,16 +35,14 @@ exports.loginUser = async(req, res, next) => {
         const user = await User.findOne({ email })
 
         if (!user)
-            res.send('User Not Found')
-            // TODO: How to handle admin check
+            throw new Error()
+                // TODO: How to handle admin check
         if (await bcrypt.compare(password, user.password)) {
-
             const { _id } = user
             const token = jwt.sign({ _id }, process.env.JWT_SECRET, {
                 //token expires in 3 days
                 expiresIn: 4320,
             })
-
             res.json({
                 success: true,
                 token,
@@ -54,16 +52,16 @@ exports.loginUser = async(req, res, next) => {
                     phoneNumber: user.phoneNumber,
                     subjects: user.subjects,
                     email: user.email,
+                    ...(user.isAdmin && { isAdmin: true })
                 }
             })
-        } else {
-            res.send('Not Allowed')
-        }
 
+        } else
+            throw new Error()
     } catch (error) {
         res.json({
             error: true,
-            message: error
+            message: 'Account Not Found'
         })
     }
 }

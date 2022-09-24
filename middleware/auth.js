@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 
-const verifyJWT = (req, res, next) => {
-    const token = req.headers["x-access-token"]
+exports.verifyJWT = (req, res, next) => {
+    const token = req.query.Authorization || req.get('Authorization')
 
     if (!token)
         res.send("No token Found")
