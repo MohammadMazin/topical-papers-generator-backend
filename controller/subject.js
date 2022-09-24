@@ -2,8 +2,12 @@ const Subject = require('../models/Subject')
 
 exports.getAllSubjects = async(req, res, next) => {
     try {
-        const data = await Subject.find()
-        res.json(data)
+        // const data = await Subject.find()
+        const data = await Subject.aggregate([{ $sort: { name: 1 } }])
+        res.json({
+            success: true,
+            data
+        })
     } catch (err) {
         next(err)
     }

@@ -23,6 +23,18 @@ exports.addQuestion = async(req, res, next) => {
             message: error
         })
     }
+}
 
-
+exports.searchQuestion = async(req, res, next) => {
+    try {
+        const { query } = req.body
+        var q = new RegExp(query, '')
+        const data = await Question.find({ description: { $regex: q } })
+        res.json({
+            success: true,
+            data
+        })
+    } catch (err) {
+        next(err)
+    }
 }
