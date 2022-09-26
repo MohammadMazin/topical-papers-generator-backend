@@ -3,7 +3,10 @@ const Board = require('../models/Board')
 exports.getAllBoards = async(req, res, next) => {
     try {
         const data = await Board.find()
-        res.json(data)
+        res.json({
+            success: true,
+            data
+        })
     } catch (err) {
         next(err)
     }

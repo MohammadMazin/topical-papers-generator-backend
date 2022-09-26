@@ -3,7 +3,10 @@ const Level = require('../models/Level')
 exports.getAllLevels = async(req, res, next) => {
     try {
         const data = await Level.find()
-        res.json(data)
+        res.json({
+            success: true,
+            data
+        })
     } catch (err) {
         next(err)
     }

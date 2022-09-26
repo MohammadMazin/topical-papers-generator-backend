@@ -29,11 +29,12 @@ const UserSchema = new Schema({
     subjects: {
         type: Array,
         required: true,
+        ref: 'subject'
     },
     isAdmin: {
         type: Boolean,
     },
-    verfied: {
+    verified: {
         type: Boolean,
         default: false
     }
