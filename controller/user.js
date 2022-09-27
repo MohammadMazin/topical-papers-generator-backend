@@ -60,10 +60,12 @@ exports.addUser = async(req, res, next) => {
 exports.loginUser = async(req, res, next) => {
     try {
         const { email, password } = req.body
-            // const user = await User.findOne({ email, verified: true })
         const user = await User.findOne({ email })
+
         if (!user)
-            throw new Error()
+            throw new Error('User not found!')
+        if (!user.verified)
+            throw new Error('Your account has not been verified yet!')
                 // TODO: How to handle admin check
         if (await bcrypt.compare(password, user.password)) {
             const { _id } = user
@@ -84,12 +86,11 @@ exports.loginUser = async(req, res, next) => {
                 }
             })
 
-        } else
-            throw new Error()
+        }
     } catch (error) {
         res.json({
             error: true,
-            message: 'Account Not Found'
+            message: error.message
         })
     }
 }
@@ -128,5 +129,47 @@ exports.loginAdminUser = async(req, res, next) => {
             error: true,
             message: 'Account Not Found'
         })
+    }
+}
+
+exports.approveUser = async(req, res) => {
+    try {
+        const { _id } = req.body
+        const user = await User.updateOne({ _id }, { $set: { verified: true } })
+
+        if (!user)
+            throw new Error('User not found')
+        res.json({
+            success: true
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.json({
+            error: true,
+            message: error
+        })
+
+    }
+}
+
+exports.unapproveUser = async(req, res) => {
+    try {
+        const { _id } = req.body
+        const user = await User.deleteOne({ _id })
+
+        if (!user)
+            throw new Error('User not found')
+        res.json({
+            success: true
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.json({
+            error: true,
+            message: error
+        })
+
     }
 }
