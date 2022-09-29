@@ -5,8 +5,11 @@ const QuestionSchema = new Schema({
         type: String,
         required: true
     },
-    // TODO: Check if it stores HTML properly
     description: {
+        type: String,
+        required: true
+    },
+    question: {
         type: String,
         required: true
     },

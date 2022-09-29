@@ -25,11 +25,11 @@ const UserSchema = new Schema({
         type: Date,
         required: true
     },
-    //TODO: check if it needs ref of subjects
     subjects: {
         type: Array,
         required: true,
-        ref: 'subject'
+        ref: 'subject',
+        default: []
     },
     isAdmin: {
         type: Boolean,

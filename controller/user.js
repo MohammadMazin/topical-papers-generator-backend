@@ -2,7 +2,7 @@ const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-
+//TODO: hide password when sent in response
 exports.getAllUsers = async(req, res, next) => {
     try {
         const data = await User.find()
@@ -18,7 +18,7 @@ exports.getAllUsers = async(req, res, next) => {
 exports.getSingleUser = async(req, res, next) => {
     try {
         const { _id } = req.body
-        const data = await User.findOne({ _id })
+        const data = await User.findOne({ _id }).populate('subjects', 'name')
         res.json({
             success: true,
             data
@@ -41,6 +41,7 @@ exports.getUnverifiedUsers = async(req, res, next) => {
 }
 
 exports.addUser = async(req, res, next) => {
+    // TODO: Handle Subjects field for admin
     try {
         const { username, email, password, name, phoneNumber, dateOfBirth, subjects, isAdmin } = req.body
         const salt = await bcrypt.genSalt()

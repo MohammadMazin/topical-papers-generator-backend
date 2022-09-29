@@ -26,6 +26,27 @@ exports.addLevel = async(req, res, next) => {
             message: error
         })
     }
+}
 
+exports.getAllLevelsOfBoard = async(req, res, next) => {
+    try {
+        const { boardId } = req.body
+        let level
+        if (boardId === 'all-boards') {
+            level = await Level.find()
+        } else
+            level = await Level.find({ boardId })
 
+        if (level)
+            res.json({
+                success: true,
+                data: level
+            })
+        else throw new Error('Could not find any levels for that boardId')
+    } catch (error) {
+        res.json({
+            error: true,
+            message: error.message
+        })
+    }
 }

@@ -3,7 +3,10 @@ const QuestionType = require('../models/QuestionType')
 exports.getAllQuestionTypes = async(req, res, next) => {
     try {
         const data = await QuestionType.find()
-        res.json(data)
+        res.json({
+            success: true,
+            data
+        })
     } catch (err) {
         next(err)
     }
@@ -20,7 +23,7 @@ exports.addQuestionType = async(req, res, next) => {
     } catch (error) {
         res.json({
             error: true,
-            message: error
+            message: error.message
         })
     }
 }
