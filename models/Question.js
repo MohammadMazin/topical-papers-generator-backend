@@ -26,6 +26,24 @@ const QuestionSchema = new Schema({
         required: true,
         unique: false,
         ref: 'questionType'
+    },
+    boardId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        unique: false,
+        ref: 'board'
+    },
+    levelId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        unique: false,
+        ref: 'level'
+    },
+    subjectId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        unique: false,
+        ref: 'subject'
     }
 })
 const questionModel = model('question', QuestionSchema)

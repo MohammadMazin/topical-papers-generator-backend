@@ -3,7 +3,10 @@ const SubjectCategory = require('../models/SubjectCategory')
 exports.getAllSubjectCategorys = async(req, res, next) => {
     try {
         const data = await SubjectCategory.find()
-        res.json(data)
+        res.json({
+            success: true,
+            data
+        })
     } catch (err) {
         next(err)
     }
