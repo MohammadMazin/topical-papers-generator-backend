@@ -41,7 +41,6 @@ exports.searchQuestion = async(req, res, next) => {
                 ...(levelId ? { levelId } : {}),
                 ...(subjectId ? { subjectId } : {}),
             })
-            //  ...(broadcastAll ? { "broadcastAll": true } : { "groups": filteredGroups.map(group => group._id) }),
 
         res.json({
             success: true,
