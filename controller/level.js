@@ -2,7 +2,7 @@ const Level = require('../models/Level')
 
 exports.getAllLevels = async(req, res, next) => {
     try {
-        const data = await Level.find()
+        const data = await Level.find().populate('boardId', 'name')
         res.json({
             success: true,
             data

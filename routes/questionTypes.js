@@ -3,7 +3,6 @@ const { getAllQuestionTypes, addQuestionType } = require('../controller/question
 const router = express.Router()
 const { adminAuth } = require('../middleware/auth')
 
-
 router.get('/', getAllQuestionTypes)
 router.post('/add', adminAuth, addQuestionType)
 

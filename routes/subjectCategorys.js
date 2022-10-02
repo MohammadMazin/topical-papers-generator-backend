@@ -6,6 +6,4 @@ const { adminAuth } = require('../middleware/auth')
 router.get('/', getAllSubjectCategorys)
 router.post('/add', adminAuth, addSubjectCategory)
 
-
-
 module.exports = router

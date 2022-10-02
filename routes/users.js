@@ -5,10 +5,10 @@ const { adminAuth } = require('../middleware/auth')
 
 router.get('/', getAllUsers)
 router.post('/user', getSingleUser)
-router.get('/unverified', adminAuth, getUnverifiedUsers)
+router.get('/unverified', getUnverifiedUsers)
 router.post('/add', adminAuth, addUser)
 router.post('/login', loginUser)
-router.post('/login/admin', adminAuth, loginAdminUser)
+router.post('/login/admin', loginAdminUser)
 router.post('/approve', adminAuth, approveUser)
 router.post('/unapprove', adminAuth, unapproveUser)
 

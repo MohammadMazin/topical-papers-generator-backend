@@ -8,7 +8,10 @@ exports.getAllBoards = async(req, res, next) => {
             data
         })
     } catch (err) {
-        next(err)
+        res.json({
+            error: true,
+            message: error
+        })
     }
 }
 
