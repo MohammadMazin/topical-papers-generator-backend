@@ -2,10 +2,9 @@ const Topic = require('../models/Topic')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-//TODO: hide password when sent in response
 exports.getAllTopics = async(req, res, next) => {
     try {
-        const data = await Topic.find()
+        const data = await Topic.find().populate('subjectId', 'name')
         res.json({
             success: true,
             data
@@ -15,14 +14,28 @@ exports.getAllTopics = async(req, res, next) => {
     }
 }
 
-exports.addTopic = async(req, res, next) => {
-    // TODO: Handle Subjects field for admin
+exports.addTopic = async(req, res) => {
     try {
-        const { name } = req.body
-        const newUser = await Topic({ name })
+        const { name, subjectId } = req.body
+        const newTopic = await Topic.create({ name, subjectId })
         res.json({
             success: true,
-            data: newUser
+            data: newTopic
+        })
+    } catch (error) {
+        res.json({
+            error
+        })
+    }
+}
+
+exports.getTopicsOfSubject = async(req, res) => {
+    try {
+        const { subjectId } = req.body
+        const data = await Topic.find({subjectId})
+        res.json({
+            success:true,
+            data
         })
     } catch (error) {
         res.json({

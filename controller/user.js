@@ -174,3 +174,23 @@ exports.unapproveUser = async(req, res) => {
 
     }
 }
+
+exports.createAdmin = async(req, res) => {
+    try {
+
+        const { name, username, email, password, phoneNumber, dateOfBirth } = req.body
+        const salt = await bcrypt.genSalt()
+        const hashedPasword = await bcrypt.hash(password, salt)
+        const newAdmin = await User.create({ name, username, email, password: hashedPasword, phoneNumber, dateOfBirth, subjects: [], isAdmin: true })
+        res.json({
+            success: true,
+            data: newAdmin
+        })
+
+    } catch (error) {
+        res.json({
+            error: true,
+            message: error.message
+        })
+    }
+}

@@ -11,8 +11,8 @@ exports.getAllQuestions = async(req, res, next) => {
 
 exports.addQuestion = async(req, res, next) => {
     try {
-        const { title, description, answer, question, marks, boardId, levelId, subjectId, questionTypeId } = req.body
-        const newQuestion = await Question.create({ title, description, marks, question, answer, boardId, levelId, subjectId, questionTypeId })
+        const { title, description, answer, question, marks, boardId, levelId, subjectId, questionTypeId, topicId } = req.body
+        const newQuestion = await Question.create({ title, description, marks, question, answer, boardId, levelId, subjectId, questionTypeId, topicId })
         res.json({
             success: true,
             data: newQuestion
@@ -28,7 +28,7 @@ exports.addQuestion = async(req, res, next) => {
 
 exports.searchQuestion = async(req, res, next) => {
     try {
-        const { query, boardId, levelId, subjectId, filterOn } = req.body
+        const { query, boardId, levelId, subjectId, topicId, filterOn } = req.body
         var q = new RegExp(query, 'i')
 
         let data;
@@ -40,6 +40,7 @@ exports.searchQuestion = async(req, res, next) => {
                 ...(boardId ? { boardId } : {}),
                 ...(levelId ? { levelId } : {}),
                 ...(subjectId ? { subjectId } : {}),
+                ...(topicId ? { topicId } : {}),
             })
 
         res.json({

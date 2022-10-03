@@ -21,6 +21,12 @@ const QuestionSchema = new Schema({
         type: Number,
         required: true
     },
+    topicId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        unique: false,
+        ref: 'topic'
+    },
     questionTypeId: {
         type: Schema.Types.ObjectId,
         required: true,
