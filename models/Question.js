@@ -50,6 +50,11 @@ const QuestionSchema = new Schema({
         required: true,
         unique: false,
         ref: 'subject'
+    },
+    paid: {
+        type: Boolean,
+        default: false,
+        required: true
     }
 })
 const questionModel = model('question', QuestionSchema)

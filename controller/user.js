@@ -16,7 +16,7 @@ exports.getAllUsers = async(req, res, next) => {
 }
 exports.getVerifiedUsers = async(req, res, next) => {
     try {
-        const data = await User.find({ verified: true }, { password: 0 })
+        const data = await User.find({ verified: true }, { password: 0 }).populate('subjects', 'name')
         res.json({
             success: true,
             data
@@ -65,6 +65,23 @@ exports.addUser = async(req, res, next) => {
     } catch (error) {
         res.json({
             error
+        })
+    }
+}
+
+exports.setUserPaidStatus = async(req, res) => {
+    try {
+        const { _id, paid } = req.body
+        const data = await User.updateOne({ _id }, { $set: { paid: paid } })
+        if (!data)
+            throw new Error('User not found')
+        res.json({
+            success: true
+        })
+    } catch (error) {
+        res.json({
+            error: true,
+            message: error
         })
     }
 }
@@ -156,7 +173,6 @@ exports.approveUser = async(req, res) => {
         })
 
     } catch (error) {
-        console.log(error)
         res.json({
             error: true,
             message: error
@@ -177,7 +193,6 @@ exports.unapproveUser = async(req, res) => {
         })
 
     } catch (error) {
-        console.log(error)
         res.json({
             error: true,
             message: error
