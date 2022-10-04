@@ -5,7 +5,18 @@ const jwt = require('jsonwebtoken')
 //TODO: hide password when sent in response
 exports.getAllUsers = async(req, res, next) => {
     try {
-        const data = await User.find()
+        const data = await User.find({}, { password: 0 })
+        res.json({
+            success: true,
+            data
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+exports.getVerifiedUsers = async(req, res, next) => {
+    try {
+        const data = await User.find({ verified: true }, { password: 0 })
         res.json({
             success: true,
             data
@@ -181,7 +192,7 @@ exports.createAdmin = async(req, res) => {
         const { name, username, email, password, phoneNumber, dateOfBirth } = req.body
         const salt = await bcrypt.genSalt()
         const hashedPasword = await bcrypt.hash(password, salt)
-        const newAdmin = await User.create({ name, username, email, password: hashedPasword, phoneNumber, dateOfBirth, subjects: [], isAdmin: true })
+        const newAdmin = await User.create({ name, username, email, password: hashedPasword, phoneNumber, dateOfBirth, subjects: [], isAdmin: true, verified: true })
         res.json({
             success: true,
             data: newAdmin

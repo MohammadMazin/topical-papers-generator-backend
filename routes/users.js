@@ -1,9 +1,10 @@
 const express = require('express')
-const { getAllUsers, getSingleUser, addUser, loginUser, loginAdminUser, getUnverifiedUsers, approveUser, unapproveUser, createAdmin } = require('../controller/user')
+const { getAllUsers, getVerifiedUsers, getSingleUser, addUser, loginUser, loginAdminUser, getUnverifiedUsers, approveUser, unapproveUser, createAdmin } = require('../controller/user')
 const router = express.Router()
 const { adminAuth } = require('../middleware/auth')
 
 router.get('/', getAllUsers)
+router.get('/verified', getVerifiedUsers)
 router.post('/user', getSingleUser)
 router.get('/unverified', getUnverifiedUsers)
 router.post('/add', adminAuth, addUser)
