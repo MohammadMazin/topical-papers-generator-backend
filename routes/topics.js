@@ -1,5 +1,5 @@
 const express = require('express')
-const { getAllTopics, addTopic, getTopicsOfSubject } = require('../controller/Topic')
+const { getAllTopics, addTopic, getTopicsOfSubject } = require('../controller/topic')
 const router = express.Router()
 const { adminAuth } = require('../middleware/auth')
 
