@@ -54,7 +54,15 @@ exports.getUnverifiedUsers = async(req, res, next) => {
 exports.addUser = async(req, res, next) => {
     // TODO: Handle Subjects field for admin
     try {
+
         const { username, email, password, name, phoneNumber, dateOfBirth, subjects, isAdmin } = req.body
+        const oldUserEmail = await User.findOne({ email })
+        if (oldUserEmail)
+            throw new Error("User With this email already Exists")
+        const oldUserUsername = await User.findOne({ username })
+        if (oldUserUsername)
+            throw new Error("User With this username already Exists")
+
         const salt = await bcrypt.genSalt()
         const hashedPasword = await bcrypt.hash(password, salt)
         const newUser = await User.create({ username, email, password: hashedPasword, name, phoneNumber, dateOfBirth, subjects, isAdmin })
@@ -64,7 +72,8 @@ exports.addUser = async(req, res, next) => {
         })
     } catch (error) {
         res.json({
-            error
+            error: true,
+            message: error.message
         })
     }
 }
@@ -205,6 +214,14 @@ exports.createAdmin = async(req, res) => {
     try {
 
         const { name, username, email, password, phoneNumber, dateOfBirth } = req.body
+
+        const oldUserEmail = await User.findOne({ email, isAdmin: true })
+        if (oldUserEmail)
+            throw new Error("Admin With this email already Exists")
+        const oldUserUsername = await User.findOne({ username, isAdmin: true })
+        if (oldUserUsername)
+            throw new Error("Admin With this username already Exists")
+
         const salt = await bcrypt.genSalt()
         const hashedPasword = await bcrypt.hash(password, salt)
         const newAdmin = await User.create({ name, username, email, password: hashedPasword, phoneNumber, dateOfBirth, subjects: [], isAdmin: true, verified: true })

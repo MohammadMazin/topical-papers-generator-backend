@@ -4,10 +4,22 @@ const User = require('../models/User')
 
 exports.getAllQuestions = async(req, res, next) => {
     try {
-        const data = await Question.find()
-        res.json(data)
+        const data = await Question.find().populate([
+            { path: 'topicId', select: 'name' },
+            { path: 'questionTypeId', select: 'name' },
+            { path: 'boardId', select: 'name' },
+            { path: 'levelId', select: 'name' },
+            { path: 'subjectId', select: 'name' },
+        ])
+        res.json({
+            success: true,
+            data
+        })
     } catch (err) {
-        next(err)
+        res.json({
+            error,
+            message: err
+        })
     }
 }
 
@@ -42,7 +54,13 @@ exports.searchQuestion = async(req, res, next) => {
             data = await Question.find({
                 description: { $regex: q },
                 ...(user.paid ? {} : { paid: false })
-            })
+            }).populate([
+                { path: 'topicId', select: 'name' },
+                { path: 'questionTypeId', select: 'name' },
+                { path: 'boardId', select: 'name' },
+                { path: 'levelId', select: 'name' },
+                { path: 'subjectId', select: 'name' },
+            ])
         else
             data = await Question.find({
                 description: { $regex: q },
@@ -51,8 +69,13 @@ exports.searchQuestion = async(req, res, next) => {
                 ...(subjectId ? { subjectId } : {}),
                 ...(topicId ? { topicId } : {}),
                 ...(user.paid ? {} : { paid: false })
-            })
-
+            }).populate([
+                { path: 'topicId', select: 'name' },
+                { path: 'questionTypeId', select: 'name' },
+                { path: 'boardId', select: 'name' },
+                { path: 'levelId', select: 'name' },
+                { path: 'subjectId', select: 'name' },
+            ])
         res.json({
             success: true,
             data
