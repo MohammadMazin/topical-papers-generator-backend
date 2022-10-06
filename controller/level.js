@@ -1,4 +1,5 @@
 const Level = require('../models/Level')
+const Question = require('../models/Question')
 
 exports.getAllLevels = async(req, res, next) => {
     try {
@@ -19,6 +20,22 @@ exports.addLevel = async(req, res, next) => {
         res.json({
             success: true,
             data: newLevel
+        })
+    } catch (error) {
+        res.json({
+            error: true,
+            message: error
+        })
+    }
+}
+
+exports.deleteLevel = async(req, res) => {
+    try {
+        const { _id } = req.body
+        await Question.deleteMany({ levelId: _id })
+        const newLevel = await Level.deleteOne({ _id })
+        res.json({
+            success: true,
         })
     } catch (error) {
         res.json({

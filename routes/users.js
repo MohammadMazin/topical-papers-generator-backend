@@ -1,5 +1,5 @@
 const express = require('express')
-const { getAllUsers, getVerifiedUsers, getSingleUser, addUser, setUserPaidStatus, loginUser, loginAdminUser, getUnverifiedUsers, approveUser, unapproveUser, createAdmin } = require('../controller/user')
+const { getAllUsers, getVerifiedUsers, deleteUser, getSingleUser, addUser, setUserPaidStatus, loginUser, loginAdminUser, getUnverifiedUsers, approveUser, unapproveUser, createAdmin } = require('../controller/user')
 const router = express.Router()
 const { adminAuth } = require('../middleware/auth')
 
@@ -14,5 +14,6 @@ router.post('/login', loginUser)
 router.post('/login/admin', loginAdminUser)
 router.post('/approve', adminAuth, approveUser)
 router.post('/unapprove', adminAuth, unapproveUser)
+router.post('/delete', adminAuth, deleteUser)
 
 module.exports = router

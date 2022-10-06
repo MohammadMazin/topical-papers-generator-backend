@@ -78,6 +78,23 @@ exports.addUser = async(req, res, next) => {
     }
 }
 
+exports.deleteUser = async(req, res) => {
+    try {
+        const { _id } = req.body
+        const user = User.deleteOne({ _id })
+        if (!user)
+            throw new Error('User not found')
+        res.json({
+            success: true,
+        })
+    } catch (error) {
+        res.json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
 exports.setUserPaidStatus = async(req, res) => {
     try {
         const { _id, paid } = req.body

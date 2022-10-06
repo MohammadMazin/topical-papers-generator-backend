@@ -12,4 +12,5 @@ const BoardSchema = new Schema({
 })
 
 const boardModel = model('board', BoardSchema)
+
 module.exports = boardModel

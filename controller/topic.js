@@ -1,4 +1,5 @@
 const Topic = require('../models/Topic')
+const Question = require('../models/Question')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -29,12 +30,27 @@ exports.addTopic = async(req, res) => {
     }
 }
 
+exports.deleteTopic = async(req, res) => {
+    try {
+        const { _id } = req.body
+        await Question.deleteMany({ topicId: _id })
+        const newTopic = await Topic.deleteOne({ _id })
+        res.json({
+            success: true,
+        })
+    } catch (error) {
+        res.json({
+            error
+        })
+    }
+}
+
 exports.getTopicsOfSubject = async(req, res) => {
     try {
         const { subjectId } = req.body
-        const data = await Topic.find({subjectId})
+        const data = await Topic.find({ subjectId })
         res.json({
-            success:true,
+            success: true,
             data
         })
     } catch (error) {

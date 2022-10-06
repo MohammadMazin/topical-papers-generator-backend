@@ -118,3 +118,22 @@ exports.searchQuestion = async(req, res, next) => {
         next(err)
     }
 }
+
+exports.deleteQuestion = async(req, res) => {
+    try {
+
+        const { _id } = req.body
+        const question = await Question.deleteOne({ _id })
+        if (!question)
+            throw new Error('Failed to Delete Question')
+        res.json({
+            success: true
+        })
+
+    } catch (error) {
+        res.json({
+            error,
+            message: error.message
+        })
+    }
+}
