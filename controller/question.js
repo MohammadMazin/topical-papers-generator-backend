@@ -46,36 +46,70 @@ exports.searchQuestion = async(req, res, next) => {
         const user = await User.findOne({ _id: userId })
         if (!user)
             throw new Error('User not found!')
+        if (user.guest) {
+            var q = new RegExp(query, 'i')
+            var data;
+            if (!filterOn)
+                data = await Question.find({
+                    description: { $regex: q },
+                    ...(user.paid ? {} : { paid: 2 })
+                }).populate([
+                    { path: 'topicId', select: 'name' },
+                    { path: 'questionTypeId', select: 'name' },
+                    { path: 'boardId', select: 'name' },
+                    { path: 'levelId', select: 'name' },
+                    { path: 'subjectId', select: 'name' },
+                ])
 
-        var q = new RegExp(query, 'i')
+            else
+                data = await Question.find({
+                    description: { $regex: q },
+                    ...(boardId ? { boardId } : {}),
+                    ...(levelId ? { levelId } : {}),
+                    ...(subjectId ? { subjectId } : {}),
+                    ...(topicId ? { topicId } : {}),
+                    ...(user.paid ? {} : { paid: 2 })
+                }).populate([
+                    { path: 'topicId', select: 'name' },
+                    { path: 'questionTypeId', select: 'name' },
+                    { path: 'boardId', select: 'name' },
+                    { path: 'levelId', select: 'name' },
+                    { path: 'subjectId', select: 'name' },
+                ])
+        } else {
+            var q = new RegExp(query, 'i')
+            var data;
+            if (!filterOn)
+                data = await Question.find({
+                    description: { $regex: q },
+                    ...(user.paid ? {} : { $or: [{ paid: 0 }, { paid: 2 }] })
+                }).populate([
+                    { path: 'topicId', select: 'name' },
+                    { path: 'questionTypeId', select: 'name' },
+                    { path: 'boardId', select: 'name' },
+                    { path: 'levelId', select: 'name' },
+                    { path: 'subjectId', select: 'name' },
+                ])
 
-        let data;
-        if (!filterOn)
-            data = await Question.find({
-                description: { $regex: q },
-                ...(user.paid ? {} : { paid: false })
-            }).populate([
-                { path: 'topicId', select: 'name' },
-                { path: 'questionTypeId', select: 'name' },
-                { path: 'boardId', select: 'name' },
-                { path: 'levelId', select: 'name' },
-                { path: 'subjectId', select: 'name' },
-            ])
-        else
-            data = await Question.find({
-                description: { $regex: q },
-                ...(boardId ? { boardId } : {}),
-                ...(levelId ? { levelId } : {}),
-                ...(subjectId ? { subjectId } : {}),
-                ...(topicId ? { topicId } : {}),
-                ...(user.paid ? {} : { paid: false })
-            }).populate([
-                { path: 'topicId', select: 'name' },
-                { path: 'questionTypeId', select: 'name' },
-                { path: 'boardId', select: 'name' },
-                { path: 'levelId', select: 'name' },
-                { path: 'subjectId', select: 'name' },
-            ])
+            else
+                data = await Question.find({
+                    description: { $regex: q },
+                    ...(boardId ? { boardId } : {}),
+                    ...(levelId ? { levelId } : {}),
+                    ...(subjectId ? { subjectId } : {}),
+                    ...(topicId ? { topicId } : {}),
+                    ...(user.paid ? {} : { $or: [{ paid: 0 }, { paid: 2 }] })
+                }).populate([
+                    { path: 'topicId', select: 'name' },
+                    { path: 'questionTypeId', select: 'name' },
+                    { path: 'boardId', select: 'name' },
+                    { path: 'levelId', select: 'name' },
+                    { path: 'subjectId', select: 'name' },
+                ])
+        }
+
+
+
         res.json({
             success: true,
             data

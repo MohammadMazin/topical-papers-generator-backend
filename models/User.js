@@ -41,6 +41,9 @@ const UserSchema = new Schema({
     paid: {
         type: Boolean,
         default: false
+    },
+    guest: {
+        type: Boolean,
     }
 })
 

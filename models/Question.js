@@ -52,10 +52,10 @@ const QuestionSchema = new Schema({
         ref: 'subject'
     },
     paid: {
-        type: Boolean,
-        default: false,
+        type: Number,
+        default: 0,
         required: true
-    }
+    },
 })
 const questionModel = model('question', QuestionSchema)
 module.exports = questionModel
