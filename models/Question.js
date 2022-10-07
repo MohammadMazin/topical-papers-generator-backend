@@ -21,6 +21,10 @@ const QuestionSchema = new Schema({
         type: Number,
         required: true
     },
+    courseId: {
+        type: String,
+        required: true
+    },
     topicId: {
         type: Schema.Types.ObjectId,
         required: true,

@@ -29,6 +29,21 @@ exports.addQuestionType = async(req, res, next) => {
     }
 }
 
+exports.editQuestionType = async(req, res, next) => {
+    try {
+        const { _id, name, description } = req.body
+        const newQuestionType = await QuestionType.updateOne({ _id }, { $set: { name, description } })
+        res.json({
+            success: true,
+        })
+    } catch (error) {
+        res.json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
 exports.deleteQuestionType = async(req, res, next) => {
     try {
         const { _id } = req.body

@@ -25,8 +25,8 @@ exports.getAllQuestions = async(req, res, next) => {
 
 exports.addQuestion = async(req, res, next) => {
     try {
-        const { title, description, answer, question, marks, boardId, levelId, subjectId, questionTypeId, topicId, paid } = req.body
-        const newQuestion = await Question.create({ title, description, marks, question, answer, boardId, levelId, subjectId, questionTypeId, topicId, paid })
+        const { title, description, answer, question, marks, courseId, boardId, levelId, subjectId, questionTypeId, topicId, paid } = req.body
+        const newQuestion = await Question.create({ title, description, marks, courseId, question, answer, boardId, levelId, subjectId, questionTypeId, topicId, paid })
         res.json({
             success: true,
             data: newQuestion
@@ -41,7 +41,7 @@ exports.addQuestion = async(req, res, next) => {
 
 exports.searchQuestion = async(req, res, next) => {
     try {
-        const { query, boardId, levelId, subjectId, topicId, filterOn, userId } = req.body
+        const { query, boardId, levelId, subjectId, courseId, topicId, filterOn, userId } = req.body
 
         const user = await User.findOne({ _id: userId })
         if (!user)
@@ -64,6 +64,7 @@ exports.searchQuestion = async(req, res, next) => {
             else
                 data = await Question.find({
                     description: { $regex: q },
+                    ...(courseId ? { courseId } : {}),
                     ...(boardId ? { boardId } : {}),
                     ...(levelId ? { levelId } : {}),
                     ...(subjectId ? { subjectId } : {}),
@@ -94,6 +95,7 @@ exports.searchQuestion = async(req, res, next) => {
             else
                 data = await Question.find({
                     description: { $regex: q },
+                    ...(courseId ? { courseId } : {}),
                     ...(boardId ? { boardId } : {}),
                     ...(levelId ? { levelId } : {}),
                     ...(subjectId ? { subjectId } : {}),
