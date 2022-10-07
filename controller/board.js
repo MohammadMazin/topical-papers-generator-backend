@@ -34,6 +34,25 @@ exports.addBoard = async(req, res, next) => {
     }
 }
 
+exports.editBoard = async(req, res) => {
+    try {
+        const { _id, name, location } = req.body
+        const data = await Board.updateOne({ _id }, { $set: { name: name, location: location } })
+        if (!data)
+            throw new Error('Could not update board!')
+        res.json({
+            success: true,
+            data
+        })
+
+    } catch (error) {
+        res.json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
 exports.deleteBoard = async(req, res, next) => {
     try {
         const { _id } = req.body

@@ -54,3 +54,22 @@ exports.deleteSubject = async(req, res, next) => {
         })
     }
 }
+
+exports.editSubject = async(req, res) => {
+    try {
+
+        const { _id, name, boardId, subjectCategoryId } = req.body
+        const updatedSubject = await Subject.updateOne({ _id }, { $set: { name, boardId, subjectCategoryId } })
+        res.json({
+            success: true,
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.json({
+            error: true,
+            message: error
+        })
+
+    }
+}

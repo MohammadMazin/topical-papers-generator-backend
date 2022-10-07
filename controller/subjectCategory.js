@@ -33,7 +33,22 @@ exports.deleteSubjectCategory = async(req, res, next) => {
     try {
         const { _id } = req.body
         await Subject.deleteMany({ subjectCategoryId: _id })
-        const newSubjectCategory = await SubjectCategory.deleteOne({ _id })
+        const subjectCategory = await SubjectCategory.deleteOne({ _id })
+        res.json({
+            success: true,
+        })
+    } catch (error) {
+        res.json({
+            error: true,
+            message: error
+        })
+    }
+}
+
+exports.editSubjectCategory = async(req, res, next) => {
+    try {
+        const { _id, name, description } = req.body
+        const newSubjectCategory = await SubjectCategory.updateOne({ _id }, { $set: { name: name, description: description } })
         res.json({
             success: true,
         })

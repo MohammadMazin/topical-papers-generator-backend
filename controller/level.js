@@ -45,6 +45,22 @@ exports.deleteLevel = async(req, res) => {
     }
 }
 
+exports.editLevel = async(req, res) => {
+    try {
+        const { _id, name, description, boardId } = req.body
+        const newLevel = await Level.updateOne({ _id }, { $set: { name: name, description: description, boardId: boardId } })
+        res.json({
+            success: true,
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({
+            error: true,
+            message: error
+        })
+    }
+}
+
 exports.getAllLevelsOfBoard = async(req, res, next) => {
     try {
         const { boardId } = req.body

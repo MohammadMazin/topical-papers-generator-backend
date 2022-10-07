@@ -45,6 +45,20 @@ exports.deleteTopic = async(req, res) => {
     }
 }
 
+exports.editTopic = async(req, res) => {
+    try {
+        const { _id, name, subjectId } = req.body
+        const editTopic = await Topic.updateOne({ _id }, { $set: { name: name, subjectId: subjectId } })
+        res.json({
+            success: true,
+        })
+    } catch (error) {
+        res.json({
+            error
+        })
+    }
+}
+
 exports.getTopicsOfSubject = async(req, res) => {
     try {
         const { subjectId } = req.body
