@@ -139,3 +139,22 @@ exports.deleteQuestion = async(req, res) => {
         })
     }
 }
+
+exports.editQuestion = async(req, res) => {
+    try {
+        const { _id, title, description, answer, question, marks, courseId, boardId, levelId, subjectId, questionTypeId, topicId, paid } = req.body
+
+
+        const updateQuestion = await Question.updateOne({ _id }, { $set: { title: title, description: description, marks: marks, courseId: courseId, question: question, answer: answer, boardId: boardId, levelId: levelId, subjectId: subjectId, questionTypeId: questionTypeId, topicId: topicId, paid: paid } })
+
+        res.json({
+            success: true,
+            data: updateQuestion
+        })
+    } catch (error) {
+        res.json({
+            error,
+            message: error.message
+        })
+    }
+}
