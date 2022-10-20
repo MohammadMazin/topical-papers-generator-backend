@@ -18,6 +18,7 @@ const questionTypesRoute = require('./routes/questionTypes')
 const questionsRoute = require('./routes/questions')
 const usersRoute = require('./routes/users')
 const topicsRoute = require('./routes/topics')
+const savedPapersRoute = require('./routes/savedPapers')
 
 //Routes
 app.use('/boards', boardsRoute)
@@ -28,6 +29,7 @@ app.use('/questionTypes', questionTypesRoute)
 app.use('/questions', questionsRoute)
 app.use('/users', usersRoute)
 app.use('/topics', topicsRoute)
+app.use('/savedPapers', savedPapersRoute)
 
 //Connect to DB
 mongoose.connect(

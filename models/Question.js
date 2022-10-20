@@ -6,7 +6,7 @@ const QuestionSchema = new Schema({
         required: true
     },
     description: {
-        type: String,
+        type: Array,
         required: true
     },
     question: {
@@ -21,8 +21,20 @@ const QuestionSchema = new Schema({
         type: Number,
         required: true
     },
-    courseId: {
+    year: {
+        type: Number,
+        required: true
+    },
+    month: {
         type: String,
+        required: true
+    },
+    variant: {
+        type: Number,
+        required: true
+    },
+    courseId: {
+        type: Array,
         required: true
     },
     topicId: {

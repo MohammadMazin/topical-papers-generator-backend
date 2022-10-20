@@ -52,7 +52,6 @@ exports.getUnverifiedUsers = async(req, res, next) => {
 }
 
 exports.addUser = async(req, res, next) => {
-    // TODO: Handle Subjects field for admin
     try {
 
         const { username, email, password, name, phoneNumber, dateOfBirth, subjects, isAdmin } = req.body
@@ -70,6 +69,32 @@ exports.addUser = async(req, res, next) => {
             success: true,
             data: newUser
         })
+    } catch (error) {
+        res.json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
+exports.changePassword = async(req, res) => {
+    try {
+        const { _id, oldPass, newPass } = req.body
+        const user = await User.findOne({ _id })
+
+        if (!user)
+            throw new Error('User ID invalid')
+
+        if (await bcrypt.compare(oldPass, user.password)) {
+            const salt = await bcrypt.genSalt()
+            const hashedPasword = await bcrypt.hash(newPass, salt)
+            const updatedPassword = await User.updateOne({ _id }, { password: hashedPasword })
+        } else
+            throw new Error('Old Password was entered incorrectly')
+        res.json({
+            success: true,
+        })
+
     } catch (error) {
         res.json({
             error: true,
@@ -140,8 +165,8 @@ exports.loginUser = async(req, res, next) => {
                     ...(user.isAdmin && { isAdmin: true })
                 }
             })
-
-        }
+        } else
+            throw new Error('Incorrect Password entered')
     } catch (error) {
         res.json({
             error: true,
@@ -156,7 +181,7 @@ exports.loginAdminUser = async(req, res, next) => {
         const user = await User.findOne({ email, isAdmin: true })
 
         if (!user)
-            throw new Error()
+            throw new Error('User not found')
                 // TODO: How to handle admin check
         if (await bcrypt.compare(password, user.password)) {
             const { _id } = user
@@ -178,11 +203,11 @@ exports.loginAdminUser = async(req, res, next) => {
             })
 
         } else
-            throw new Error()
+            throw new Error('Incorrect Password entered')
     } catch (error) {
         res.json({
             error: true,
-            message: 'Account Not Found'
+            message: error.message
         })
     }
 }

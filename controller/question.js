@@ -23,10 +23,29 @@ exports.getAllQuestions = async(req, res, next) => {
     }
 }
 
+exports.getQuestionFromIds = async(req, res) => {
+    try {
+        const { idArray } = req.body
+        const data = await Question.find({ _id: { $in: idArray } })
+        if (!data)
+            throw new Error('Could not find Questions!')
+        res.json({
+            success: true,
+            data
+        })
+    } catch (error) {
+        res.json({
+            error: true,
+            message: error.message
+        })
+
+    }
+}
+
 exports.addQuestion = async(req, res, next) => {
     try {
-        const { title, description, answer, question, marks, courseId, boardId, levelId, subjectId, questionTypeId, topicId, paid } = req.body
-        const newQuestion = await Question.create({ title, description, marks, courseId, question, answer, boardId, levelId, subjectId, questionTypeId, topicId, paid })
+        const { title, description, answer, question, marks, year, month, variant, courseId, boardId, levelId, subjectId, questionTypeId, topicId, paid } = req.body
+        const newQuestion = await Question.create({ title, description, marks, year, month, variant, courseId, question, answer, boardId, levelId, subjectId, questionTypeId, topicId, paid })
         res.json({
             success: true,
             data: newQuestion
@@ -41,34 +60,46 @@ exports.addQuestion = async(req, res, next) => {
 
 exports.searchQuestion = async(req, res, next) => {
     try {
-        const { query, boardId, levelId, subjectId, courseId, topicId, filterOn, userId } = req.body
+        const { query, description, boardId, levelId, subjectId, questionTypeId, courseId, topicId, filterOn, userId } = req.body
+
 
         const user = await User.findOne({ _id: userId })
         if (!user)
             throw new Error('User not found!')
+
+        // Guest User
         if (user.guest) {
             var q = new RegExp(query, 'i')
             var data;
-            if (!filterOn)
-                data = await Question.find({
-                    description: { $regex: q },
-                    ...(user.paid ? {} : { paid: 2 })
-                }).populate([
-                    { path: 'topicId', select: 'name' },
-                    { path: 'questionTypeId', select: 'name' },
-                    { path: 'boardId', select: 'name' },
-                    { path: 'levelId', select: 'name' },
-                    { path: 'subjectId', select: 'name' },
-                ])
+            if (!filterOn) {
 
-            else
+                //Search without filters
+                const userData = await User.findOne({ _id: userId })
+                if (!userData)
+                    throw new Error('Could not get user information for searching')
+                const userSubjects = userData.subjects
+
                 data = await Question.find({
-                    description: { $regex: q },
-                    ...(courseId ? { courseId } : {}),
+                        title: { $regex: q },
+                        subjectId: { $in: userSubjects },
+                        ...(user.paid ? {} : { paid: 2 })
+                    }).populate([
+                        { path: 'topicId', select: 'name' },
+                        { path: 'questionTypeId', select: 'name' },
+                        { path: 'boardId', select: 'name' },
+                        { path: 'levelId', select: 'name' },
+                        { path: 'subjectId', select: 'name' },
+                    ])
+                    //Search with filters
+            } else
+                data = await Question.find({
+                    title: { $regex: q },
+                    ...(courseId ? { courseId: { $in: courseId } } : {}),
+                    ...(description ? { description: { $in: description } } : {}),
+                    ...(questionTypeId ? { questionTypeId } : {}),
                     ...(boardId ? { boardId } : {}),
                     ...(levelId ? { levelId } : {}),
                     ...(subjectId ? { subjectId } : {}),
-                    ...(topicId ? { topicId } : {}),
                     ...(user.paid ? {} : { paid: 2 })
                 }).populate([
                     { path: 'topicId', select: 'name' },
@@ -77,12 +108,21 @@ exports.searchQuestion = async(req, res, next) => {
                     { path: 'levelId', select: 'name' },
                     { path: 'subjectId', select: 'name' },
                 ])
-        } else {
+        }
+
+        // Non Guest User
+        else {
             var q = new RegExp(query, 'i')
             var data;
-            if (!filterOn)
+            if (!filterOn) {
+                //Search without filters
+                const userData = await User.findOne({ _id: userId })
+                if (!userData)
+                    throw new Error('Could not get user information for searching')
+                const userSubjects = userData.subjects
                 data = await Question.find({
-                    description: { $regex: q },
+                    title: { $regex: q },
+                    subjectId: { $in: userSubjects },
                     ...(user.paid ? {} : { $or: [{ paid: 0 }, { paid: 2 }] })
                 }).populate([
                     { path: 'topicId', select: 'name' },
@@ -91,15 +131,18 @@ exports.searchQuestion = async(req, res, next) => {
                     { path: 'levelId', select: 'name' },
                     { path: 'subjectId', select: 'name' },
                 ])
-
+            }
+            //Search with filters
             else
                 data = await Question.find({
-                    description: { $regex: q },
-                    ...(courseId ? { courseId } : {}),
+                    title: { $regex: q },
+                    ...(courseId ? { courseId: { $in: courseId } } : {}),
+                    ...(description ? { description: { $in: description } } : {}),
+                    ...(questionTypeId ? { questionTypeId } : {}),
                     ...(boardId ? { boardId } : {}),
                     ...(levelId ? { levelId } : {}),
                     ...(subjectId ? { subjectId } : {}),
-                    ...(topicId ? { topicId } : {}),
+                    ...(topicId ? { topicId: { $in: topicId } } : {}),
                     ...(user.paid ? {} : { $or: [{ paid: 0 }, { paid: 2 }] })
                 }).populate([
                     { path: 'topicId', select: 'name' },
@@ -142,11 +185,9 @@ exports.deleteQuestion = async(req, res) => {
 
 exports.editQuestion = async(req, res) => {
     try {
-        const { _id, title, description, answer, question, marks, courseId, boardId, levelId, subjectId, questionTypeId, topicId, paid } = req.body
+        const { _id, title, description, answer, question, marks, year, month, variant, courseId, boardId, levelId, subjectId, questionTypeId, topicId, paid } = req.body
 
-
-        const updateQuestion = await Question.updateOne({ _id }, { $set: { title: title, description: description, marks: marks, courseId: courseId, question: question, answer: answer, boardId: boardId, levelId: levelId, subjectId: subjectId, questionTypeId: questionTypeId, topicId: topicId, paid: paid } })
-
+        const updateQuestion = await Question.updateOne({ _id }, { $set: { title: title, description: description, marks: marks, year: year, month: month, variant: variant, courseId: courseId, question: question, answer: answer, boardId: boardId, levelId: levelId, subjectId: subjectId, questionTypeId: questionTypeId, topicId: topicId, paid: paid } })
         res.json({
             success: true,
             data: updateQuestion
